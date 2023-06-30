@@ -1,0 +1,55 @@
+[
+  {
+    "id": 3,
+    "title": "Proteina whey",
+    "description": "Descripción del Producto 2",
+    "code": "DEF4567",
+    "price": 20,
+    "status": true,
+    "stock": 8,
+    "category": "xd",
+    "thumbnails": []
+  },
+  {
+    "id": 4,
+    "title": "Proteina isolada",
+    "description": "Descripción del Producto 2",
+    "code": "DEF45678",
+    "price": 20,
+    "status": true,
+    "stock": 8,
+    "category": "lalala",
+    "thumbnails": []
+  },
+  {
+    "id": 5,
+    "title": "Nuevo producto",
+    "description": "Descripción del nuevo producto",
+    "code": "P001",
+    "price": 203,
+    "status": true,
+    "stock": 10,
+    "category": "Electrónica",
+    "thumbnails": []
+  },
+  {
+    "title": "rere",
+    "price": "200",
+    "id": 6
+  },
+  {
+    "title": "rwqe",
+    "price": "300",
+    "id": 7
+  },
+  {
+    "title": "eee",
+    "price": "200",
+    "id": 8
+  },
+  {
+    "title": "rqwer",
+    "price": "100",
+    "id": 9
+  }
+]

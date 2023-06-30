@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lista de productos en tiempo real</title>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    // Conectarse al servidor de Socket.IO
+    var socket = io();
+
+    // Manejar evento 'update' para recibir la lista actualizada de productos
+    socket.on('update', function(products) {
+      // Generar la lista de productos en tiempo real
+      var productList = document.getElementById('product-list');
+      productList.innerHTML = '';
+      products.forEach(function(product) {
+        var listItem = document.createElement('li');
+        listItem.textContent = product.title + ' - Precio: ' + product.price;
+        productList.appendChild(listItem);
+      });
+    });
+
+    // Función para enviar el formulario de creación de productos
+    function createProduct() {
+      var name = document.getElementById('name').value;
+      var title = document.getElementById('title').value;
+      var price = document.getElementById('price').value;
+      var category = document.getElementById('category').value;
+      var description = document.getElementById('description').value;
+
+      // Verificar si los campos requeridos están presentes
+      if (!title || !price || !category || !description) {
+        alert('Por favor, complete todos los campos requeridos');
+        return;
+      }
+
+      var product = {
+        name:name,
+        title: title,
+        price: price,
+        category: category,
+        description: description
+      };
+
+      // Enviar el producto al servidor a través de Socket.IO
+      socket.emit('createProduct', product);
+
+      // Limpiar los campos del formulario
+      document.getElementById('name').value = '';
+      document.getElementById('title').value = '';
+      document.getElementById('price').value = '';
+      document.getElementById('category').value = '';
+      document.getElementById('description').value = '';
+    }
+
+    // Función para enviar el formulario de eliminación de productos
+    function deleteProduct() {
+      var id = document.getElementById('id').value;
+
+      // Enviar el ID del producto al servidor a través de Socket.IO
+      socket.emit('deleteProduct', id);
+
+      // Limpiar el campo del formulario
+      document.getElementById('id').value = '';
+    }
+  </script>
+</head>
+<body>
+  <h1>Lista de productos en tiempo real</h1>
+  <ul id="product-list">  
+    {{#each this}}    
+      <li>{{price}}</li>
+    {{/each}}    
+  </ul>
+
+  <h2>Crear producto</h2>
+  <form onsubmit="event.preventDefault(); createProduct();">
+    <input type="text" id="title" placeholder="Título" required>
+    <input type="text" id="name" placeholder="Nombre del producto" required>
+    <input type="number" id="price" placeholder="Precio" required>
+    <!-- Agregar campos adicionales requeridos -->
+    <input type="text" id="category" placeholder="Categoría" required>
+    <input type="text" id="description" placeholder="Descripción" required>
+    <!-- Fin de los campos adicionales requeridos -->
+    <button type="submit">Crear</button>
+  </form>
+
+  <h2>Eliminar producto</h2>
+  <form onsubmit="event.preventDefault(); deleteProduct();">
+    <input type="number" id="id" placeholder="ID del producto" required>
+    <button type="submit">Eliminar</button>
+  </form>
+</body>
+</html>
+
+
