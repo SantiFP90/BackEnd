@@ -21,6 +21,7 @@ import ProductModel from "../dao/models/productModel.js";
 
 const app = express();
 app.use(bodyParser.json());
+app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 const server = http.createServer(app);
 const io = new Server(server);
@@ -46,6 +47,7 @@ const currentDir = dirname(currentFilePath);
 const handlebars = exphbs.create({
   allowProtoProperties: true,
   allowProtoMethods: true,
+  allowProtoPropertiesByDefault: true,
 });
 
 app.engine("handlebars", handlebars.engine);

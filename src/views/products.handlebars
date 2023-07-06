@@ -1,0 +1,36 @@
+<!-- products.handlebars -->
+
+<h1>Products</h1>
+
+<ul>
+    {{#each products}}
+    <li>
+        <h2>{{name}}</h2>
+        <p>Price: ${{price}}</p>
+        <p>Category: {{category}}</p>
+        <a href="/products/{{this._id}}">View Details</a>
+        <button onclick="addToCart('{{this._id}}')">Add to Cart</button>
+        <hr>
+    </li>
+    {{/each}}
+</ul>
+
+<script>
+    function addToCart(productId) {
+        const cartId = '64a7515b66f8eb8a81ea5bdb'; // VERLO EN ESTE CARRITO!
+
+        fetch(`/api/carts/${cartId}/product/${productId}`, {
+            method: 'POST'
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('Product added to cart successfully');
+                } else {
+                    throw new Error('Failed to add product to cart');
+                }
+            })
+            .catch(error => {
+                alert(error.message);
+            });
+    }
+</script>

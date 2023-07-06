@@ -27,6 +27,7 @@
     "express-routemap": "^1.6.0",
     "http": "^0.0.1-security",
     "mongoose": "^7.3.1",
+    "mongoose-paginate-v2": "^1.7.1",
     "socket.io": "^4.7.0",
     "uuid": "^9.0.0"
   }
