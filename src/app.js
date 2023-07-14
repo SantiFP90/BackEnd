@@ -1,3 +1,16 @@
+import routerProductos from "../routes/routerProducts.js";
+import cartRouter from "../routes/routerCart.js";
+import routerChat from "../routes/routerChat.js";
+import viewsRouter from "../routes/views.router.js";
+import sessionsRouter from "../routes/sessions.router.js";
+
+import ProductManager from "../dao/managers/productManager.js";
+import CartManager from "../dao/managers/cartManager.js";
+
+import CartModel from "../dao/models/cartModel.js";
+import MessageModel from "../dao/models/messageModel.js";
+import ProductModel from "../dao/models/productModel.js";
+
 import path from "path";
 import express from "express";
 import bodyParser from "body-parser";
@@ -7,21 +20,21 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 import exphbs from "express-handlebars";
 import mongoose from "mongoose";
-
-import routerProductos from "../routes/routerProducts.js";
-import cartRouter from "../routes/routerCart.js";
-import routerChat from "../routes/routerChat.js";
-
-import ProductManager from "../dao/managers/productManager.js";
-import CartManager from "../dao/managers/cartManager.js";
-
-import CartModel from "../dao/models/cartModel.js";
-import MessageModel from "../dao/models/messageModel.js";
-import ProductModel from "../dao/models/productModel.js";
+import cookieParser from "cookie-parser";
+import MongoStore from "connect-mongo";
+import session from "express-session";
 
 const app = express();
 app.use(bodyParser.json());
-app.use(express.static("public"));
+app.use(
+  express.static("public", {
+    setHeaders: (res, path) => {
+      if (path.endsWith(".js")) {
+        res.setHeader("Content-Type", "application/javascript");
+      }
+    },
+  })
+);
 app.use(bodyParser.urlencoded({ extended: true }));
 const server = http.createServer(app);
 const io = new Server(server);
@@ -39,6 +52,20 @@ mongoose
   .catch((error) => {
     console.error("Error al conectar a MongoDB:", error);
   });
+
+app.use(cookieParser());
+app.use(
+  session({
+    store: new MongoStore({
+      mongoUrl:
+        "mongodb+srv://SantiFP90:tupac123@santifp90.vuaufnp.mongodb.net/ecommerce?retryWrites=true&w=majority",
+      ttl: 3600,
+    }),
+    secret: "esUnSecreto",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
 
 const currentFilePath = fileURLToPath(import.meta.url);
 const currentDir = dirname(currentFilePath);
@@ -69,13 +96,7 @@ app.use("/", routerChat);
 
 // Ruta para renderizar la vista home.handlebars
 app.get("/", async (req, res) => {
-  try {
-    const products = await productManager.getProducts();
-    res.render("index", { products });
-  } catch (error) {
-    console.error("Error retrieving products:", error);
-    res.status(500).send("Internal server error");
-  }
+  res.render("index");
 });
 
 // Ruta para renderizar la vista realTimeProducts.handlebars
@@ -179,6 +200,10 @@ io.on("connection", (socket) => {
     console.log("Client disconnected");
   });
 });
+
+//SESSION
+app.use("/", viewsRouter);
+app.use("/api/sessions", sessionsRouter);
 
 server.listen(PORT, () => {
   console.log(`Servidor Express escuchando en el puerto ${PORT}`);

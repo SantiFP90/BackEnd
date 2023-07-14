@@ -1,31 +1,28 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const messageSchema = new mongoose.Schema({
   roomId: {
     type: String,
-    required: false // Hacer que el campo roomId sea opcional
+    required: false,
   },
   sender: {
     type: String,
-    required: false // Hacer que el campo sender sea opcional
+    required: false,
   },
   message: {
     type: String,
-    required: true // Mantener el campo message como requerido
-  }, 
+    required: true,
+  },
   user: {
     type: String,
-    required: true // Mantener el campo message como requerido
+    required: true,
   },
   timestamp: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
-
-const MessageModel = mongoose.model('Message', messageSchema);
+const MessageModel = mongoose.model("Message", messageSchema);
 
 export default MessageModel;
-
-

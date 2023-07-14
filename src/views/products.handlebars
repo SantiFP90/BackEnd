@@ -2,6 +2,9 @@
 
 <h1>Products</h1>
 
+<h2>Bienvenido: <p>{{user.name}}</p>
+</h2>
+
 <ul>
     {{#each products}}
     <li>
@@ -14,6 +17,11 @@
     </li>
     {{/each}}
 </ul>
+
+<form action="/logout" method="POST">
+    <button type="submit">Logout</button>
+</form>
+
 
 <script>
     function addToCart(productId) {
