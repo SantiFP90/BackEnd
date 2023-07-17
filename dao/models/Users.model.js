@@ -6,6 +6,14 @@ const schema = new mongoose.Schema({
   email: String,
   age: Number,
   password: String,
+  rol: {
+    type: String,
+    default: "user",
+  },
+  admin: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const userModel = mongoose.model("users", schema);

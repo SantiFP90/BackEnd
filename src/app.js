@@ -96,7 +96,7 @@ app.use("/", routerChat);
 
 // Ruta para renderizar la vista home.handlebars
 app.get("/", async (req, res) => {
-  res.render("index");
+  res.render("login");
 });
 
 // Ruta para renderizar la vista realTimeProducts.handlebars

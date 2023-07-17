@@ -45,15 +45,18 @@ router.post("/login", async (req, res) => {
     name: `${user.first_name} ${user.last_name}`,
     email: user.email,
     age: user.age,
+    admin:
+      user.email === "adminCoder@coder.com" &&
+      user.password === "adminCod3r123",
   };
 
+  // console.log(res.redirect("/api/products"));
+  // res.redirect(302, "/api/products");
   res.send({
     status: "success",
     payload: req.session.user,
     message: "¡Primer logueo realizado! :)",
   });
-
-  res.redirect("/api/products");
 });
 
 router.post("/logout", (req, res) => {

@@ -2,8 +2,13 @@
 
 <h1>Products</h1>
 
-<h2>Bienvenido: <p>{{user.name}}</p>
-</h2>
+
+{{#if user.admin}}
+<h2>Bienvenido Admin: {{user.name}}</h2>
+{{else}}
+<h2>Bienvenido Usuario: {{user.name}}</h2>
+{{/if}}
+
 
 <ul>
     {{#each products}}
@@ -18,7 +23,7 @@
     {{/each}}
 </ul>
 
-<form action="/logout" method="POST">
+<form action="/api/sessions/logout" method="POST">
     <button type="submit">Logout</button>
 </form>
 

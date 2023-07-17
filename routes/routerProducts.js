@@ -56,9 +56,12 @@ router.get("/", async (req, res) => {
           ? `/api/products?limit=${limit}&page=${parseInt(page) + 1}`
           : null,
     };
+    const usuario = req.session.user;
     const context = {
       products: paginationData.payload.map((p) => p.toObject()),
+      user: usuario,
     };
+
     res.render("products", context);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
