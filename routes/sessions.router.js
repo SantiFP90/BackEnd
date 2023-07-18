@@ -1,64 +1,51 @@
 import { Router } from "express";
 import userModel from "../dao/models/Users.model.js";
+import { createHash, isValidPassword } from "../src/utils.js";
+import passport from "passport";
 
 const router = Router();
 
-router.post("/register", async (req, res) => {
-  const { first_name, last_name, email, age, password } = req.body;
-  const exists = await userModel.findOne({ email });
-  if (exists)
-    return res
-      .status(400)
-      .send({ status: "error", error: "User already exists" });
-  const user = {
-    first_name,
-    last_name,
-    email,
-    age,
-    password,
-  };
-  await userModel.create(user);
-  res.send({ status: "success", message: "User registered" });
+router.post(
+  "/register",
+  passport.authenticate("register", {
+    failureRedirect: "/api/sessions/failregister",
+  }),
+  async (req, res) => {
+    res.send({ status: "success", message: "User registered" });
+  }
+);
+
+router.get("/failregister", (req, res) => {
+  res.status(400).send({ status: "error", error: "Registry fail" });
 });
 
-router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+router.post(
+  "/login",
+  passport.authenticate("login", {
+    failureRedirect: "/api/sessions/faillogin",
+  }),
+  async (req, res) => {
+    if (!req.user)
+      return res
+        .status(400)
+        .send({ status: "error", error: "Incorrect credentials" });
 
-  // check if user exists
-  const user = await userModel.findOne({ email });
-
-  if (!user)
-    return res
-      .status(400)
-      .send({ status: "error", error: "User does not exists" });
-
-  // check if password is correct
-
-  if (user.password !== password) {
-    return res.status(400).send({
-      status: "error",
-      error: "User exists but password is incorrect",
+    req.session.user = {
+      name: `${req.user.first_name} ${req.user.last_name}`,
+      email: req.user.email,
+      age: req.user.age,
+    };
+    res.send({
+      status: "success",
+      payload: req.session.user,
+      message: "¡Primer logueo realizado! :)",
     });
   }
+);
 
-  req.session.user = {
-    name: `${user.first_name} ${user.last_name}`,
-    email: user.email,
-    age: user.age,
-    admin:
-      user.email === "adminCoder@coder.com" &&
-      user.password === "adminCod3r123",
-  };
-
-  // console.log(res.redirect("/api/products"));
-  // res.redirect(302, "/api/products");
-  res.send({
-    status: "success",
-    payload: req.session.user,
-    message: "¡Primer logueo realizado! :)",
-  });
+router.get("/faillogin", (req, res) => {
+  res.status(400).send({ status: "error", error: "Login fail" });
 });
-
 router.post("/logout", (req, res) => {
   req.session.destroy((err) => {
     if (err) {
@@ -67,6 +54,31 @@ router.post("/logout", (req, res) => {
       res.redirect("/login");
     }
   });
+});
+
+router.put("/restartPassword", async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).send({
+      status: "error",
+      error: "Incomplete Values",
+    });
+  }
+
+  const user = await userModel.findOne({ email });
+
+  if (!user)
+    return res.status(404).send({ status: "error", error: "Not user found" });
+
+  const newHashedPassword = createHash(password);
+
+  await userModel.updateOne(
+    { _id: user._id },
+    { $set: { password: newHashedPassword } }
+  );
+
+  res.send({ status: "success", message: "Contraseña restaurada" });
 });
 
 export default router;
